@@ -11,7 +11,6 @@ class ProcessadorConsultas:
         self.file_to_read = config["LEIA"]
         self.consultas_file = config["CONSULTAS"]
         self.esperados_file = config["ESPERADOS"]
-        print(self.consultas_file)
 
     def readConfig(self):
         config_data = {}
@@ -26,7 +25,6 @@ class ProcessadorConsultas:
         return config_data
     
     def getConsultas(self):
-        print(self.file_to_read)
         try:
             self.root = ET.parse(self.file_to_read).getroot()
             self.getConsultasTable()
@@ -82,8 +80,7 @@ class ProcessadorConsultas:
             for j in range(self.results[i]):   
                 self.esperadosTable[lineCounter].insert(0, self.queryNumbers[i])
                 lineCounter+=1
-            
-                
+             
     def getQueryNumbers(self):
         self.queryNumbers = []
         for number in self.root.findall("QUERY/QueryNumber"):
@@ -104,7 +101,7 @@ class ProcessadorConsultas:
             writer = csv.writer(csvfile, delimiter=';')
             writer.writerows(data)
 
-processador = ProcessadorConsultas("config.txt")
+processador = ProcessadorConsultas("PC.cfg")
 processador.getConsultas()
 processador.getEsperados()
 

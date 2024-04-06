@@ -8,28 +8,41 @@ from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 
 stop = stopwords.words("english")
-ponctuation = [".", ",", ":",]
-
-def isNumber(n):
-    try:
-        float(n)
-        return True
-    except ValueError:
-        return False
 
 class ListaInvertida:
     
-    def __init__(self):
+    def __init__(self, config_file):
         self.words = {}
+        self.config_file = config_file
+        self.configuration()
+    
+    def configuration(self):
+        self.files_to_read = []
+        try:
+            with open(self.config_file, 'r') as file:
+                for line in file:
+                    line = line.strip()
+                    key, value = line.split("=", 1)
+                    if (key == "LEIA"):
+                        self.files_to_read.append(value)
+                    elif (key == "ESCREVA"):
+                        self.file_to_write = value
+                        
+        except FileNotFoundError:
+            print("Error: File not found!")  
         
         
-    def generate(self, file_to_read):
+        
+    def generate(self):
+        for file in self.files_to_read:
+            self.generateOne(file)
+        self.write_results()
+        
+    def generateOne(self, file_to_read):
         root = ET.parse(file_to_read).getroot()
         records = self.getTokensByRecord(root)
         for key, value in records.items():
             self.getInvertedList(key, value)
-        print(self.words)
-
     
     def getTokensByRecord(self, root):
         data = {}
@@ -60,10 +73,16 @@ class ListaInvertida:
             if (token not in self.words):
                 self.words[token] = []
             self.words[token].append(recordNumb)
+    
+    def write_results(self):
+        with open(self.file_to_write, 'w', newline='') as csvfile:
+            writer = csv.writer(csvfile, delimiter=';')
+            for key, value in self.words.items():
+                writer.writerow([key.upper(), str(value)]) 
         
 
-l = ListaInvertida()
-l.generate("data/cf74.xml")
+l = ListaInvertida("GLI.cfg")
+l.generate()
         
         
         
