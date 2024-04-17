@@ -2,14 +2,33 @@ from xml.etree import ElementTree as ET
 import csv
 
 class ProcessadorConsultas:
-    def __init__(self, file_to_read):
-        self.file_to_read = file_to_read
+    def __init__(self, config_file):
+        self.config_file = config_file
+        self.configuration()
+        
+    def configuration(self):
+        config = self.readConfig()
+        self.file_to_read = config["LEIA"]
+        self.consultas_file = config["CONSULTAS"]
+        self.esperados_file = config["ESPERADOS"]
+
+    def readConfig(self):
+        config_data = {}
+        try:
+            with open(self.config_file, 'r') as file:
+                for line in file:
+                    line = line.strip()
+                    key, value = line.split("=", 1)
+                    config_data[key] = value.strip()
+        except FileNotFoundError:
+            print("Error: File not found!")
+        return config_data
     
     def getConsultas(self):
         try:
             self.root = ET.parse(self.file_to_read).getroot()
             self.getConsultasTable()
-            self.save_csv(self.consultasTable, "test.csv")
+            self.save_csv(self.consultasTable, self.consultas_file)
         except:
             print("ERROR")
     
@@ -17,7 +36,7 @@ class ProcessadorConsultas:
         try:
             self.root = ET.parse(self.file_to_read).getroot()
             self.getEsperadosTable()
-            self.save_csv(self.esperadosTable, "test1.csv")
+            self.save_csv(self.esperadosTable, self.esperados_file)
         except:
             print("ERROR1")
         
@@ -30,14 +49,10 @@ class ProcessadorConsultas:
         self.consultasTable.insert(0, ["QueryNumber", "QueryText"])
         
     def getEsperadosTable(self):
-        print(1)
         self.getQueryNumbers()
-        print(2)
         self.getResults()
         self.getDocNumbersAndVotes()
-        print(3)
         self.insertQueryNumber()
-        print(4)
         self.esperadosTable.insert(0, ["QueryNumber", "DocNumber", "DocVotes"])
     
     def getDocNumbersAndVotes(self):
@@ -65,8 +80,7 @@ class ProcessadorConsultas:
             for j in range(self.results[i]):   
                 self.esperadosTable[lineCounter].insert(0, self.queryNumbers[i])
                 lineCounter+=1
-            #print(lineCounter)
-                
+             
     def getQueryNumbers(self):
         self.queryNumbers = []
         for number in self.root.findall("QUERY/QueryNumber"):
@@ -87,7 +101,8 @@ class ProcessadorConsultas:
             writer = csv.writer(csvfile, delimiter=';')
             writer.writerows(data)
 
-processador = ProcessadorConsultas("data/cfquery.xml")
+processador = ProcessadorConsultas("PC.cfg")
+processador.getConsultas()
 processador.getEsperados()
 
     
