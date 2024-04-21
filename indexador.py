@@ -5,7 +5,7 @@ import time
 MODULE = "[INDEXADOR] "
 class Indexador:
     def __init__(self, config_file):
-        print(MODULE, "Iniciando")
+        print(MODULE, "Iniciando...")
         self.config_file = config_file
         self.configuration()
         getcontext().prec = 5
@@ -103,6 +103,6 @@ class Indexador:
         return norm_freqs
 
 
-indexador = Indexador("INDEX.cfg")
-indexador.generate()
+# indexador = Indexador("INDEX.cfg")
+# indexador.generate()
                 

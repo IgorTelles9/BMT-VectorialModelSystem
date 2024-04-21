@@ -1,8 +1,10 @@
 from xml.etree import ElementTree as ET
 import csv
+MODULO = "[PROCESSADOR DE CONSULTAS] "
 
 class ProcessadorConsultas:
     def __init__(self, config_file):
+        print(MODULO, "Iniciando...")
         self.config_file = config_file
         self.configuration()
         
@@ -15,30 +17,36 @@ class ProcessadorConsultas:
     def readConfig(self):
         config_data = {}
         try:
+            print(MODULO, "Lendo arquivo de configuração...")
             with open(self.config_file, 'r') as file:
                 for line in file:
                     line = line.strip()
                     key, value = line.split("=", 1)
                     config_data[key] = value.strip()
+            print(MODULO, "Arquivo de configuração lido com sucesso")
         except FileNotFoundError:
-            print("Error: File not found!")
+            print(MODULO, "Arquivo de configuração não encontrado")
         return config_data
     
     def getConsultas(self):
         try:
+            print(MODULO, "Obtendo consultas...")
             self.root = ET.parse(self.file_to_read).getroot()
             self.getConsultasTable()
             self.save_csv(self.consultasTable, self.consultas_file)
+            print(MODULO, "Consultas salvas no arquivo ", self.consultas_file) 
         except:
-            print("ERROR")
+            print(MODULO, "Erro ao obter consultas")
     
     def getEsperados(self):
         try:
+            print(MODULO, "Obtendo esperados...")
             self.root = ET.parse(self.file_to_read).getroot()
             self.getEsperadosTable()
             self.save_csv(self.esperadosTable, self.esperados_file)
+            print(MODULO, "Esperados salvos no arquivo ", self.esperados_file)
         except:
-            print("ERROR1")
+            print(MODULO, "Erro ao obter esperados")
         
     def getConsultasTable(self):
         self.getQueryNumbers()
@@ -101,8 +109,8 @@ class ProcessadorConsultas:
             writer = csv.writer(csvfile, delimiter=';')
             writer.writerows(data)
 
-processador = ProcessadorConsultas("PC.cfg")
-processador.getConsultas()
-processador.getEsperados()
+# processador = ProcessadorConsultas("PC.cfg")
+# processador.getConsultas()
+# processador.getEsperados()
 
     

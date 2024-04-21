@@ -10,8 +10,8 @@ import time
 import csv
 MODULE = "[BUSCADOR] "
 import nltk
-nltk.download('stopwords')
-nltk.download('punkt')
+nltk.download('stopwords', quiet=True)
+nltk.download('punkt', quiet=True)
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 stop = stopwords.words("english")
@@ -138,5 +138,5 @@ class Buscador:
         filtered_tokens = [t.upper() for t in alpha_tokens if not t.lower() in stop]
         return filtered_tokens
 
-buscador = Buscador("BUSCA.cfg")
-buscador.generate()
+# buscador = Buscador("BUSCA.cfg")
+# buscador.generate()

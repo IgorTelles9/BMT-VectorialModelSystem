@@ -2,8 +2,8 @@
 from xml.etree import ElementTree as ET
 import csv
 import nltk
-nltk.download('stopwords')
-nltk.download('punkt')
+nltk.download('stopwords', quiet=True)
+nltk.download('punkt', quiet=True)
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 import time
@@ -15,7 +15,7 @@ MODULE = "[LISTA INVERTIDA] "
 class ListaInvertida:
     
     def __init__(self, config_file):
-        print(MODULE, "Iniciando") 
+        print(MODULE, "Iniciando...") 
         self.words = {}
         self.config_file = config_file
         self.configuration()
@@ -91,8 +91,8 @@ class ListaInvertida:
                 writer.writerow([key.upper(), str(value)]) 
         
 
-l = ListaInvertida("GLI.cfg")
-l.generate()
+# l = ListaInvertida("GLI.cfg")
+# l.generate()
         
         
         
