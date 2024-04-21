@@ -6,18 +6,23 @@ nltk.download('stopwords')
 nltk.download('punkt')
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
+import time
 
 stop = stopwords.words("english")
+
+MODULE = "[LISTA INVERTIDA] "
 
 class ListaInvertida:
     
     def __init__(self, config_file):
+        print(MODULE, "Iniciando") 
         self.words = {}
         self.config_file = config_file
         self.configuration()
     
     def configuration(self):
         self.files_to_read = []
+        print(MODULE, "Lendo arquivo de configuração") 
         try:
             with open(self.config_file, 'r') as file:
                 for line in file:
@@ -27,16 +32,21 @@ class ListaInvertida:
                         self.files_to_read.append(value)
                     elif (key == "ESCREVA"):
                         self.file_to_write = value
-                        
+            print(MODULE, "Arquivo de configuração lido com sucesso!")
         except FileNotFoundError:
-            print("Error: File not found!")  
+            print(MODULE, "ERRO: Arquivo de configuração não encontrado") 
         
         
         
     def generate(self):
+        print(MODULE, "Gerando lista invertida...")
+        start = time.time()
         for file in self.files_to_read:
             self.generateOne(file)
         self.write_results()
+        end = time.time()
+        print(MODULE, "Lista invertida gerada com sucesso em ", self.file_to_write)
+        print(MODULE, "Tempo levado: ", str(end-start), "s")
         
     def generateOne(self, file_to_read):
         root = ET.parse(file_to_read).getroot()
@@ -65,12 +75,12 @@ class ListaInvertida:
     def getTokensFromAbstract(self, abstract):
         tokens = word_tokenize(abstract)
         alpha_tokens = [token for token in tokens if token.isalpha()]
-        filtered_tokens = [t for t in alpha_tokens if not t.lower() in stop]
+        filtered_tokens = [t.upper() for t in alpha_tokens if not t.lower() in stop]
         return filtered_tokens
     
     def getInvertedList(self, recordNumb, tokens):
         for token in tokens:
-            if (token not in self.words):
+            if (token not in self.words.keys()):
                 self.words[token] = []
             self.words[token].append(recordNumb)
     
