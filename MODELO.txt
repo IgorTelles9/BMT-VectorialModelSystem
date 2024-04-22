@@ -1,0 +1,8 @@
+Cada parte do modelo está bem dividida entre os quatro classes, cada uma em um arquivo .py: 
+
+1.processador_consultas.py - Realiza as tarefas do Processador de consultas, criando o arquivo de consultas e de resultados esperados.
+2.lista_invertida.py - Realiza as tarefas do Gerador de Lista Invertida, criando listas invertidas para cada palavra encontrada nos abstracts. Aplica filtros para remover stopwords, números, etc.
+3.indexador.py - Realiza as tarefas do Indexador. Cria a tabela termo-documento TF-IDF.
+4.buscador.py - Realiza as tarefas do Buscador. Busca cada consulta listada utilizando a tabela termo-documento.
+
+O arquivo run.py chama cada um dos métodos de geração das classes anteriores. 
