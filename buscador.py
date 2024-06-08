@@ -19,11 +19,12 @@ stemmer = PorterStemmer()
 stop = stopwords.words("english")
 
 class Buscador: 
-    def __init__(self, config_file, stemmer = False):
+    def __init__(self, config_file, isStemming = False):
         print(MODULE, "Iniciando...")
         self.config_file = config_file
         self.configuration()
-
+        self.isStemming = isStemming
+        
     def configuration(self):
         print(MODULE, "Lendo arquivo de configuração") 
         try:
@@ -138,7 +139,7 @@ class Buscador:
         tokens = word_tokenize(query)
         alpha_tokens = [token for token in tokens if token.isalpha()]
         filtered_tokens = [t.upper() for t in alpha_tokens if not t.lower() in stop]
-        if stemmer: 
+        if self.isStemming: 
             return [stemmer.stem(token) for token in filtered_tokens]
         return filtered_tokens
 
