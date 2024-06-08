@@ -7,6 +7,8 @@ nltk.download('punkt', quiet=True)
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 import time
+from nltk.stem import PorterStemmer
+stemmer = PorterStemmer()
 
 stop = stopwords.words("english")
 
@@ -14,7 +16,7 @@ MODULE = "[LISTA INVERTIDA] "
 
 class ListaInvertida:
     
-    def __init__(self, config_file):
+    def __init__(self, config_file, stemmer = False):
         print(MODULE, "Iniciando...") 
         self.words = {}
         self.config_file = config_file
@@ -76,6 +78,8 @@ class ListaInvertida:
         tokens = word_tokenize(abstract)
         alpha_tokens = [token for token in tokens if token.isalpha()]
         filtered_tokens = [t.upper() for t in alpha_tokens if not t.lower() in stop]
+        if stemmer: 
+            return [stemmer.stem(token) for token in filtered_tokens]
         return filtered_tokens
     
     def getInvertedList(self, recordNumb, tokens):

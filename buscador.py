@@ -14,10 +14,12 @@ nltk.download('stopwords', quiet=True)
 nltk.download('punkt', quiet=True)
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
+from nltk.stem import PorterStemmer
+stemmer = PorterStemmer()
 stop = stopwords.words("english")
 
 class Buscador: 
-    def __init__(self, config_file):
+    def __init__(self, config_file, stemmer = False):
         print(MODULE, "Iniciando...")
         self.config_file = config_file
         self.configuration()
@@ -136,6 +138,8 @@ class Buscador:
         tokens = word_tokenize(query)
         alpha_tokens = [token for token in tokens if token.isalpha()]
         filtered_tokens = [t.upper() for t in alpha_tokens if not t.lower() in stop]
+        if stemmer: 
+            return [stemmer.stem(token) for token in filtered_tokens]
         return filtered_tokens
 
 # buscador = Buscador("BUSCA.cfg")
