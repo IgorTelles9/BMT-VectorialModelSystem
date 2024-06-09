@@ -104,6 +104,7 @@ class Buscador:
         distances = [0.0]*self.nDocs
 
         tokens = self.getTokensFromQuery(query)
+        print(tokens)
         q_vector = math.sqrt(len(tokens))
 
         # get weights
@@ -131,7 +132,7 @@ class Buscador:
         positions = []
         for dist in distances:
             index = ranked_distances.index(dist)
-            positions.append(index)
+            positions.append(index + 1)
             ranked_distances[index] = -1
         return positions
 
@@ -140,7 +141,7 @@ class Buscador:
         alpha_tokens = [token for token in tokens if token.isalpha()]
         filtered_tokens = [t.upper() for t in alpha_tokens if not t.lower() in stop]
         if self.isStemming: 
-            return [stemmer.stem(token) for token in filtered_tokens]
+            return [stemmer.stem(token).upper() for token in filtered_tokens]
         return filtered_tokens
 
 # buscador = Buscador("BUSCA.cfg")
