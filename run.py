@@ -2,24 +2,27 @@ from processador_consultas import ProcessadorConsultas
 from lista_invertida import ListaInvertida
 from indexador import Indexador
 from buscador import Buscador
+import metricas
 
-stemmer = False 
-stemmerInput = input("Deseja rodar com Stemmer de Porter? (s ou n)\n")
-if stemmerInput == "s":
-    stemmer = True
+with open("BUSCA.cfg", "r") as file:
+    stemmer = file.readline().strip("\n")
+    if stemmer == "STEMMER":
+        print("Rodando com Stemmer")
+    else:
+        print("Rodando sem Stemmer")
 
-stemmerPrint = "LIGADO" if stemmer else "DESLIGADO"
-
-print("Rodando com Stemmer " + stemmerPrint)
 processador = ProcessadorConsultas("PC.cfg")
 processador.getConsultas()
 processador.getEsperados()
 
-l = ListaInvertida("GLI.cfg", stemmer)
+l = ListaInvertida("GLI.cfg")
 l.generate()
 
 indexador = Indexador("INDEX.cfg")
 indexador.generate()
 
-buscador = Buscador("BUSCA.cfg", stemmer)
+buscador = Buscador("BUSCA.cfg")
 buscador.generate()
+
+print("Gerando métricas...")
+metricas.generate(stemmer)

@@ -19,25 +19,29 @@ stemmer = PorterStemmer()
 stop = stopwords.words("english")
 
 class Buscador: 
-    def __init__(self, config_file, isStemming = False):
+    def __init__(self, config_file):
         print(MODULE, "Iniciando...")
         self.config_file = config_file
         self.configuration()
-        self.isStemming = isStemming
         
     def configuration(self):
         print(MODULE, "Lendo arquivo de configuração") 
         try:
             with open(self.config_file, 'r') as file:
-                for line in file:
-                    line = line.strip()
-                    key, value = line.split("=", 1)
-                    if (key == "MODELO"):
-                        self.model_file = value
-                    elif (key == "CONSULTAS"):
-                        self.query_file = value
-                    elif (key == "RESULTADOS"):
-                        self.file_to_write = value
+                stemmerSuffix = ""
+                for i, line in enumerate(file):
+                    if (i > 0):
+                        line = line.strip()
+                        key, value = line.split("=", 1)
+                        if (key == "MODELO"):
+                            self.model_file = value
+                        elif (key == "CONSULTAS"):
+                            self.query_file = value
+                        elif (key == "RESULTADOS"):
+                            self.file_to_write = value.strip(".csv") + "-" + stemmerSuffix + ".csv"
+                    else:
+                        stemmerSuffix = line.strip("\n")
+                        self.isStemming = False if stemmerSuffix == "NOSTEMMER" else True
             print(MODULE, "Arquivo de configuração lido com sucesso!")
         except FileNotFoundError:
             print(MODULE, "ERRO: Arquivo de configuração não encontrado")  
@@ -104,7 +108,6 @@ class Buscador:
         distances = [0.0]*self.nDocs
 
         tokens = self.getTokensFromQuery(query)
-        print(tokens)
         q_vector = math.sqrt(len(tokens))
 
         # get weights

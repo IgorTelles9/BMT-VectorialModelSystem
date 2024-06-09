@@ -16,25 +16,28 @@ MODULE = "[LISTA INVERTIDA] "
 
 class ListaInvertida:
     
-    def __init__(self, config_file, isStemming = False):
+    def __init__(self, config_file):
         print(MODULE, "Iniciando...") 
         self.words = {}
         self.config_file = config_file
         self.configuration()
-        self.isStemming = isStemming
-    
+        self.isStemming = False 
+
     def configuration(self):
         self.files_to_read = []
         print(MODULE, "Lendo arquivo de configuração") 
         try:
             with open(self.config_file, 'r') as file:
-                for line in file:
-                    line = line.strip()
-                    key, value = line.split("=", 1)
-                    if (key == "LEIA"):
-                        self.files_to_read.append(value)
-                    elif (key == "ESCREVA"):
-                        self.file_to_write = value
+                for i,line in enumerate(file):
+                    if (i > 0):
+                        line = line.strip()
+                        key, value = line.split("=", 1)
+                        if (key == "LEIA"):
+                            self.files_to_read.append(value)
+                        elif (key == "ESCREVA"):
+                            self.file_to_write = value
+                    else:
+                        self.isStemming = False if line == "NOSTEMMER" else True
             print(MODULE, "Arquivo de configuração lido com sucesso!")
         except FileNotFoundError:
             print(MODULE, "ERRO: Arquivo de configuração não encontrado") 
