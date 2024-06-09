@@ -1,15 +1,14 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
+from sklearn.metrics import f1_score
 import ast
 
 def generate(stemmer):
-    generatePrecisionRecall(stemmer)
-
-def generatePrecisionRecall(stemmer):
     expected_df, results_df = getBaseDfs(stemmer)
     results_processed_df = getResultsProcessed(results_df)
     SavePrecisionRecall(expected_df, results_processed_df, stemmer)
+    generateF1Score(expected_df, results_processed_df, stemmer)
 
 def getBaseDfs(stemmer):
     expected_df = pd.read_csv('./result/esperados.csv', sep=';')
@@ -61,3 +60,21 @@ def SavePrecisionRecall(expected_df, results_processed_df, stemmer):
     plt.savefig('metricas/11pontos-' + stemmer.lower() +'.png')
 
 
+def generateF1Score(expected_df, results_processed_df, stemmer):
+    f1 = calculate_f1_score(expected_df, results_processed_df)
+    with open('metricas/f1-' + stemmer.lower() + '.csv', 'w') as f:
+        f.write("f1,"+str(f1))
+
+
+def calculate_f1_score(expected_df, results_processed_df):
+    y_true, y_pred = [], []
+    for query_id in expected_df['QueryNumber'].unique():
+        true_docs = set(expected_df[expected_df['QueryNumber'] == query_id]['DocNumber'].values)
+        retrieved_docs = set(results_processed_df[results_processed_df['query_id'] == query_id]['doc_id'].values)
+        
+        # Criação das listas de y_true e y_pred
+        for doc_id in true_docs.union(retrieved_docs):
+            y_true.append(1 if doc_id in true_docs else 0)
+            y_pred.append(1 if doc_id in retrieved_docs else 0)
+            
+    return f1_score(y_true, y_pred)
