@@ -21,7 +21,6 @@ class ListaInvertida:
         self.words = {}
         self.config_file = config_file
         self.configuration()
-        self.isStemming = False 
 
     def configuration(self):
         self.files_to_read = []
@@ -37,7 +36,8 @@ class ListaInvertida:
                         elif (key == "ESCREVA"):
                             self.file_to_write = value
                     else:
-                        self.isStemming = False if line == "NOSTEMMER" else True
+                        stemmerSuffix = line.strip("\n")
+                        self.isStemming = False if stemmerSuffix == "NOSTEMMER" else True
             print(MODULE, "Arquivo de configuração lido com sucesso!")
         except FileNotFoundError:
             print(MODULE, "ERRO: Arquivo de configuração não encontrado") 
@@ -83,7 +83,8 @@ class ListaInvertida:
         alpha_tokens = [token for token in tokens if token.isalpha()]
         filtered_tokens = [t.upper() for t in alpha_tokens if not t.lower() in stop]
         if self.isStemming: 
-           return [stemmer.stem(token) for token in filtered_tokens]
+            stemmed_tokens = [stemmer.stem(token).upper() for token in filtered_tokens]
+            return stemmed_tokens
         return filtered_tokens
     
     def getInvertedList(self, recordNumb, tokens):

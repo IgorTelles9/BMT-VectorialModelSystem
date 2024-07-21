@@ -144,7 +144,8 @@ class Buscador:
         alpha_tokens = [token for token in tokens if token.isalpha()]
         filtered_tokens = [t.upper() for t in alpha_tokens if not t.lower() in stop]
         if self.isStemming: 
-            return [stemmer.stem(token).upper() for token in filtered_tokens]
+            stemmed_tokens = [stemmer.stem(token).upper() for token in filtered_tokens]
+            return stemmed_tokens 
         return filtered_tokens
 
 # buscador = Buscador("BUSCA.cfg")

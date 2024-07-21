@@ -41,8 +41,8 @@ class ProcessadorConsultas:
     def getEsperados(self):
         try:
             print(MODULO, "Obtendo esperados...")
-            self.root = ET.parse(self.file_to_read).getroot()
-            self.getEsperadosTable()
+            xml = ET.parse(self.file_to_read).getroot()
+            self.getEsperadosTable(xml)
             self.save_csv(self.esperadosTable, self.esperados_file)
             print(MODULO, "Esperados salvos no arquivo ", self.esperados_file)
         except:
@@ -56,39 +56,17 @@ class ProcessadorConsultas:
             self.consultasTable.append([self.queryNumbers[i],self.texts[i]])
         self.consultasTable.insert(0, ["QueryNumber", "QueryText"])
         
-    def getEsperadosTable(self):
-        self.getQueryNumbers()
-        self.getResults()
-        self.getDocNumbersAndVotes()
-        self.insertQueryNumber()
-        self.esperadosTable.insert(0, ["QueryNumber", "DocNumber", "DocVotes"])
-    
-    def getDocNumbersAndVotes(self):
+    def getEsperadosTable(self, xml):
         self.esperadosTable = []
-        for item in self.root.findall("QUERY/Records/Item"):
-            docNumber = int(item.text)
-            docVotes = self.getVotes(item.get("score"))
-            self.esperadosTable.append([docNumber, docVotes])
+        for query in xml.findall('QUERY'):
+            query_number = int(query.find('QueryNumber').text)
             
-    def getVotes(self, score):
-        votes = 0
-        for x in score:
-            if int(x) > 0:
-                votes+=1
-        return votes
-    
-    def getResults(self):
-        self.results = []
-        for result in self.root.findall("QUERY/Results"):
-            self.results.append(int(result.text))
-             
-    def insertQueryNumber(self):
-        lineCounter = 0
-        for i in range(len(self.queryNumbers)):
-            for j in range(self.results[i]):   
-                self.esperadosTable[lineCounter].insert(0, self.queryNumbers[i])
-                lineCounter+=1
-             
+            for item in query.find('Records').findall('Item'):
+                document_number = int(item.text)
+                document_votes = sum(int(digit) for digit in item.attrib['score'])
+                self.esperadosTable.append([query_number, document_number, document_votes])
+        self.esperadosTable.insert(0, ["QueryNumber", "DocNumber", "DocVotes"])
+         
     def getQueryNumbers(self):
         self.queryNumbers = []
         for number in self.root.findall("QUERY/QueryNumber"):
@@ -108,9 +86,5 @@ class ProcessadorConsultas:
         with open(file_to_save, 'w', newline='') as csvfile:
             writer = csv.writer(csvfile, delimiter=';')
             writer.writerows(data)
-
-# processador = ProcessadorConsultas("PC.cfg")
-# processador.getConsultas()
-# processador.getEsperados()
 
     

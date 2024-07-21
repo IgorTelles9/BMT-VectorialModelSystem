@@ -24,5 +24,4 @@ indexador.generate()
 buscador = Buscador("BUSCA.cfg")
 buscador.generate()
 
-print("Gerando métricas...")
 metricas.generate(stemmer)
